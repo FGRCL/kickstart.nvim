@@ -42,6 +42,7 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'js-debug-adapter',
       },
     }
 
@@ -92,5 +93,83 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = 8123,
+      executable = {
+        command = 'js-debug-adapter',
+      },
+    }
+
+    for _, language in ipairs { 'typescirpt', 'javascript', 'javascriptreact' } do
+      dap.configurations[language] = {
+        {
+          name = 'Launch',
+          type = 'pwa-node',
+          request = 'launch',
+          program = '${file}',
+          rootPath = '${workspaceFolder}',
+          cwd = '${workspaceFolder}',
+          sourceMaps = true,
+          skipFiles = { '<node_internals>/**' },
+          protocol = 'inspector',
+          console = 'integratedTerminal',
+        },
+        {
+          name = 'Attach to node process',
+          type = 'pwa-node',
+          request = 'attach',
+          rootPath = '${workspaceFolder}',
+          processId = require('dap.utils').pick_process,
+        },
+        {
+          name = 'Debug Main Process (Electron)',
+          type = 'pwa-node',
+          request = 'launch',
+          program = '${workspaceFolder}/node_modules/.bin/electron',
+          args = {
+            '${workspaceFolder}/dist/index.js',
+          },
+          outFiles = {
+            '${workspaceFolder}/dist/*.js',
+          },
+          resolveSourceMapLocations = {
+            '${workspaceFolder}/dist/**/*.js',
+            '${workspaceFolder}/dist/*.js',
+          },
+          rootPath = '${workspaceFolder}',
+          cwd = '${workspaceFolder}',
+          sourceMaps = true,
+          skipFiles = { '<node_internals>/**' },
+          protocol = 'inspector',
+          console = 'integratedTerminal',
+        },
+        {
+          name = 'Compile & Debug Main Process (Electron)',
+          type = 'pwa-node',
+          request = 'launch',
+          preLaunchTask = 'npm run build-ts',
+          program = '${workspaceFolder}/node_modules/.bin/electron',
+          args = {
+            '${workspaceFolder}/dist/index.js',
+          },
+          outFiles = {
+            '${workspaceFolder}/dist/*.js',
+          },
+          resolveSourceMapLocations = {
+            '${workspaceFolder}/dist/**/*.js',
+            '${workspaceFolder}/dist/*.js',
+          },
+          rootPath = '${workspaceFolder}',
+          cwd = '${workspaceFolder}',
+          sourceMaps = true,
+          skipFiles = { '<node_internals>/**' },
+          protocol = 'inspector',
+          console = 'integratedTerminal',
+        },
+      }
+    end
   end,
 }
