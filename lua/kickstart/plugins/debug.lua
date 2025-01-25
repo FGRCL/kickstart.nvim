@@ -5,6 +5,12 @@
 -- Primarily focused on configuring the debugger for Go, but can
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
+local js_based_languages = {
+  'typescript',
+  'typescriptreact',
+  'javascript',
+  'javascriptreact',
+}
 
 return {
   -- NOTE: Yes, you can install new plugins here!
@@ -23,6 +29,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mxsdev/nvim-dap-vscode-js',
   },
   config = function()
     local dap = require 'dap'
@@ -94,16 +101,76 @@ return {
       },
     }
 
-    dap.adapters['pwa-node'] = {
-      type = 'server',
-      host = 'localhost',
-      port = 8123,
-      executable = {
-        command = 'js-debug-adapter',
-      },
+    -- setup adapters
+    require('dap-vscode-js').setup {
+      -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+      -- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
+      debugger_cmd = { 'js-debug-adapter' }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+      adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+      -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
+      -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
+      -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
     }
 
-    for _, language in ipairs { 'typescirpt', 'javascript', 'javascriptreact' } do
+    -- dap.adapters['pwa-node'] = {
+    --   type = 'server',
+    --   host = 'localhost',
+    --   port = '${port}',
+    --   executable = {
+    --     command = 'js-debug-adapter',
+    --     args = { '${port}' },
+    --   },
+    -- }
+    --
+    -- dap.adapters['pwa-chrome'] = {
+    --   type = 'server',
+    --   host = 'localhost',
+    --   port = '${port}',
+    --   executable = {
+    --     command = 'node',
+    --     args = {
+    --       require('mason-registry').get_package('js-debug-adapter'):get_install_path() .. '/js-debug/src/dapDebugServer.js',
+    --       '${port}',
+    --     },
+    --   },
+    -- }
+    -- dap.adapters.chrome = {
+    --   type = 'executable',
+    --   command = 'node',
+    --   args = { os.getenv 'HOME' },
+    -- }
+
+    -- dap.configurations.javascript = {
+    --   type = 'pwa-node',
+    --   request = 'launch',
+    --   name = 'Launch file',
+    --   program = '${file}',
+    --   cwd = '${workspaceFolder}',
+    -- }
+
+    -- custom adapter for running tasks before starting debug
+    --   dap.configurations.javascript = {
+    --   }
+    --   local custom_adapter = 'pwa-node-custom'
+    --   dap.adapters[custom_adapter] = function(cb, config)
+    --     if config.preLaunchTask then
+    --       local async = require 'plenary.async'
+    --       local notify = require('notify').async
+    --
+    --       async.run(function()
+    --         ---@diagnostic disable-next-line: missing-parameter
+    --         notify('Running [' .. config.preLaunchTask .. ']').events.close()
+    --       end, function()
+    --         vim.fn.system(config.preLaunchTask)
+    --         config.type = 'pwa-node'
+    --         dap.run(config)
+    --       end)
+    --     end
+    --   end
+    --
+    --   require('dap.ext.vscode').load_launchjs()
+    --
+    for _, language in ipairs(js_based_languages) do
       dap.configurations[language] = {
         {
           name = 'Launch',
@@ -125,51 +192,42 @@ return {
           processId = require('dap.utils').pick_process,
         },
         {
-          name = 'Debug Main Process (Electron)',
+          name = 'Debug Main Process',
           type = 'pwa-node',
           request = 'launch',
-          program = '${workspaceFolder}/node_modules/.bin/electron',
-          args = {
-            '${workspaceFolder}/dist/index.js',
+          command = 'npm run dev',
+          cwd = '${workspaceFolder}/frontend',
+          env = {
+            REMOTE_DEBUGGING_PORT = '9222',
+            VSCODE_DEBUG = 'true',
           },
-          outFiles = {
-            '${workspaceFolder}/dist/*.js',
-          },
-          resolveSourceMapLocations = {
-            '${workspaceFolder}/dist/**/*.js',
-            '${workspaceFolder}/dist/*.js',
-          },
-          rootPath = '${workspaceFolder}',
-          cwd = '${workspaceFolder}',
-          sourceMaps = true,
-          skipFiles = { '<node_internals>/**' },
-          protocol = 'inspector',
-          console = 'integratedTerminal',
         },
         {
-          name = 'Compile & Debug Main Process (Electron)',
-          type = 'pwa-node',
-          request = 'launch',
-          preLaunchTask = 'npm run build-ts',
-          program = '${workspaceFolder}/node_modules/.bin/electron',
-          args = {
-            '${workspaceFolder}/dist/index.js',
-          },
-          outFiles = {
-            '${workspaceFolder}/dist/*.js',
-          },
-          resolveSourceMapLocations = {
-            '${workspaceFolder}/dist/**/*.js',
-            '${workspaceFolder}/dist/*.js',
-          },
-          rootPath = '${workspaceFolder}',
-          cwd = '${workspaceFolder}',
-          sourceMaps = true,
-          skipFiles = { '<node_internals>/**' },
-          protocol = 'inspector',
-          console = 'integratedTerminal',
+          name = 'Debug Renderer Process',
+          type = 'chrome',
+          request = 'attach',
+          port = 9222,
+          webRoot = '${workspaceFolder}/frontend/src',
+          timeout = 30000,
         },
       }
     end
   end,
+  -- keys = {
+  --   {
+  --     '<leader>da',
+  --     function()
+  --       if vim.fn.filereadable '.vscode/launch.json' then
+  --         local dap_vscode = require 'dap.ext.vscode'
+  --         dap_vscode.load_launchjs(nil, {
+  --           ['pwa-node'] = js_based_languages,
+  --           ['chrome'] = js_based_languages,
+  --           ['pwa-chrome'] = js_based_languages,
+  --         })
+  --       end
+  --       require('dap').continue()
+  --     end,
+  --     desc = 'Run with Args',
+  --   },
+  -- },
 }
