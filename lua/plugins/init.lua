@@ -10,4 +10,5 @@ return {
   require 'plugins.tailwindtools',
   require 'plugins.cmpai',
   require 'plugins.workspacediagnostics',
+  require 'plugins.markdown-preview',
 }

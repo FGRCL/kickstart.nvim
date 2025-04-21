@@ -470,6 +470,8 @@ require('lazy').setup({
 
         -- bash
         bashls = {},
+        shellcheck = {},
+        shellharden = {},
 
         -- Markdown
         vale = {},
@@ -491,12 +493,14 @@ require('lazy').setup({
         pyright = {},
 
         -- SQL
-        -- sqls = {},
+        sqlls = {},
         -- sqlfluff = {},
 
         -- Rust
         ['rust-analyzer'] = {},
         ['ast-grep'] = {},
+        -- Nginx
+        nginx_language_server = {},
 
         -- English
         ['harper-ls'] = {
@@ -599,6 +603,7 @@ require('lazy').setup({
         css = { 'prettier' },
         python = { 'black' },
         rust = { 'ast-grep' },
+        bash = { 'shellharden' },
       },
     },
   },
@@ -759,8 +764,6 @@ require('lazy').setup({
       end,
     },
   },
-  -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -802,7 +805,27 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'javascript', 'typescript' },
+      ensure_installed = {
+        'c',
+        'lua',
+        'vim',
+        'vimdoc',
+        'query',
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'vim',
+        'vimdoc',
+        'javascript',
+        'typescript',
+        'go',
+        'python',
+        'comment',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -829,6 +852,16 @@ require('lazy').setup({
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
+  },
+  -- Highlight todo, notes, etc in comments
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+    -- config = function()
+    --   vim.keymap.set('n', '<leader>sc', ':TodoTelescope<cr>')
+    -- end,
   },
   {
     'takac/vim-hardtime',
