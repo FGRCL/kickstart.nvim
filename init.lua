@@ -476,13 +476,27 @@ require('lazy').setup({
         glow = {},
 
         -- Python
-        pylsp = {},
+        pylsp = {
+          -- settings = {
+          --   pylsp = {
+          --     plugins = {
+          --       pylint = { enabled = true },
+          --     },
+          --   },
+          -- },
+        },
         black = {},
-        mypy = {},
+        -- mypy = {},
+        ruff = {},
+        pyright = {},
 
         -- SQL
         -- sqls = {},
         -- sqlfluff = {},
+
+        -- Rust
+        ['rust-analyzer'] = {},
+        ['ast-grep'] = {},
 
         -- English
         ['harper-ls'] = {
@@ -584,6 +598,7 @@ require('lazy').setup({
         html = { 'prettier' },
         css = { 'prettier' },
         python = { 'black' },
+        rust = { 'ast-grep' },
       },
     },
   },
@@ -819,9 +834,6 @@ require('lazy').setup({
     'takac/vim-hardtime',
   },
   {
-    'danth/pathfinder.vim',
-  },
-  {
     'sitiom/nvim-numbertoggle',
   },
   {
@@ -852,9 +864,9 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 

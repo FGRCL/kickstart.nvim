@@ -9,4 +9,5 @@ return {
   require 'plugins.reactextract',
   require 'plugins.tailwindtools',
   require 'plugins.cmpai',
+  require 'plugins.workspacediagnostics',
 }

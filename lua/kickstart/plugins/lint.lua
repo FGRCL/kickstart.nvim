@@ -14,6 +14,7 @@ return {
         json = { 'jsonlint' },
         html = { 'erb_lint' },
         css = { 'stylelint' },
+        python = { 'ruff' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
