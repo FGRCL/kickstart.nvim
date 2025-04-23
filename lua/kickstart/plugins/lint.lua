@@ -17,6 +17,7 @@ return {
         python = { 'ruff' },
         bash = { 'shellharden' },
         cpp = { 'cpplint' },
+        cmake = { 'cmakelint' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
