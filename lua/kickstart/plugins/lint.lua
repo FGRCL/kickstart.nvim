@@ -7,10 +7,6 @@ return {
       local lint = require 'lint'
       lint.linters_by_ft = {
         markdown = { 'vale' },
-        javascript = { 'eslint' },
-        javascriptreact = { 'eslint' },
-        typescript = { 'eslint' },
-        typescriptreact = { 'eslint' },
         json = { 'jsonlint' },
         html = { 'erb_lint' },
         css = { 'stylelint' },
