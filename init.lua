@@ -411,113 +411,9 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. Available keys are:
-      --  - cmd (table): Override the default command used to start the server
-      --  - filetypes (table): Override the default list of associated filetypes for the server
-      --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-      --  - settings (table): Override the default settings passed when initializing the server.
-      --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local servers = {
-        gopls = {},
-
-        ts_ls = {},
-
-        lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
-
-        -- HTML
-        html = {},
-        htmlhint = {},
-
-        -- CSS
-        cssls = {},
-        stylelint = {},
-        tailwindcss = {},
-
-        -- JSON
-        jsonls = {},
-        jsonlint = {},
-
-        -- Starlark
-        bzl = {},
-
-        -- bash
-        bashls = {},
-        shellcheck = {},
-        shellharden = {},
-
-        -- Markdown
-        vale = {},
-        glow = {},
-
-        -- Python
-        pylsp = {
-          -- settings = {
-          --   pylsp = {
-          --     plugins = {
-          --       pylint = { enabled = true },
-          --     },
-          --   },
-          -- },
-        },
-        ruff = {},
-        pyright = {},
-
-        -- SQL
-        sqlls = {},
-        -- sqlfluff = {},
-
-        -- Rust
-        ['rust-analyzer'] = {},
-        ['ast-grep'] = {},
-        -- Nginx
-        nginx_language_server = {},
-
-        -- C++
-        clangd = {},
-        cpplint = {},
-        trivy = {},
-        ['clang-format'] = {},
-
-        -- English
-        ['harper-ls'] = {
-          filetypes = {
-            'c',
-            'cpp',
-            'cs',
-            'gitcommit',
-            'go',
-            'html',
-            'java',
-            'javascript',
-            'lua',
-            'markdown',
-            'nix',
-            'python',
-            'ruby',
-            'rust',
-            'swift',
-            'toml',
-            'typescript',
-            'typescriptreact',
-          },
-        },
-      }
+      -- Load language configurations
+      local languages = require('languages')
+      local servers = languages.get_lsp_servers()
 
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
@@ -530,11 +426,7 @@ require('lazy').setup({
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'js-debug-adapter',
-        'vale-ls',
-      })
+      vim.list_extend(ensure_installed, languages.get_ensure_installed())
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -578,15 +470,10 @@ require('lazy').setup({
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        html = { 'prettier' },
-        css = { 'prettier' },
-        python = { 'ruff' },
-        rust = { 'ast-grep' },
-        bash = { 'shellharden' },
-        cpp = { 'clang-format' },
-      },
+      formatters_by_ft = function()
+        local languages = require('languages')
+        return languages.get_formatters_by_ft()
+      end,
     },
   },
   { -- Autocompletion
@@ -785,39 +672,39 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    opts = {
-      ensure_installed = {
-        'c',
-        'lua',
+    opts = function()
+      local languages = require('languages')
+      local base_parsers = {
         'vim',
         'vimdoc',
         'query',
-        'bash',
-        'c',
         'diff',
-        'html',
-        'lua',
-        'luadoc',
-        'markdown',
-        'vim',
-        'vimdoc',
-        'javascript',
-        'typescript',
-        'go',
-        'python',
         'comment',
-      },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-    },
+      }
+      local language_parsers = languages.get_treesitter_parsers()
+      
+      local all_parsers = {}
+      for _, parser in ipairs(base_parsers) do
+        table.insert(all_parsers, parser)
+      end
+      for _, parser in ipairs(language_parsers) do
+        table.insert(all_parsers, parser)
+      end
+
+      return {
+        ensure_installed = all_parsers,
+        -- Autoinstall languages that are not installed
+        auto_install = true,
+        highlight = {
+          enable = true,
+          -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
+          --  If you are experiencing weird indenting issues, add the language to
+          --  the list of additional_vim_regex_highlighting and disabled languages for indent.
+          additional_vim_regex_highlighting = { 'ruby' },
+        },
+        indent = { enable = true, disable = { 'ruby' } },
+      }
+    end,
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
