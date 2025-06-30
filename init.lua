@@ -494,6 +494,14 @@ require('lazy').setup({
         trivy = {},
         ['clang-format'] = {},
 
+        --YAML
+        yamlls = {},
+        yamlfmt = {},
+        yamllint = {},
+
+        --HEML
+        ['helm_ls'] = {},
+
         -- English
         ['harper-ls'] = {
           filetypes = {
@@ -586,6 +594,7 @@ require('lazy').setup({
         rust = { 'ast-grep' },
         bash = { 'shellharden' },
         cpp = { 'clang-format' },
+        yaml = { 'yamlfmt' },
       },
     },
   },
@@ -845,7 +854,10 @@ require('lazy').setup({
     -- end,
   },
   {
-    'takac/vim-hardtime',
+    'm4xshen/hardtime.nvim',
+    lazy = false,
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    opts = {},
   },
   {
     'sitiom/nvim-numbertoggle',
