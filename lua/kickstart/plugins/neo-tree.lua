@@ -8,6 +8,7 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
+    'nvim-telescope/telescope.nvim',
   },
   cmd = 'Neotree',
   keys = {
@@ -52,12 +53,24 @@ return {
           end
         end)
       end,
+      grep_directory = function(state)
+        local telescope = require 'telescope.builtin'
+        local directory = state.tree:get_node():get_id()
+        telescope.live_grep { cwd = directory }
+      end,
+      find_file = function(state)
+        local telescope = require 'telescope.builtin'
+        local directory = state.tree:get_node():get_id()
+        telescope.find_files { cwd = directory }
+      end,
     },
     filesystem = {
       window = {
         mappings = {
           ['\\'] = 'close_window',
           ['Y'] = 'copy_selector',
+          ['G'] = 'grep_directory',
+          ['F'] = 'find_file',
         },
       },
       filtered_items = {
