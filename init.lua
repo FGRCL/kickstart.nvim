@@ -454,7 +454,7 @@ require('lazy').setup({
         jsonlint = {},
 
         -- Starlark
-        bzl = {},
+        tilt = {},
 
         -- bash
         bashls = {},
