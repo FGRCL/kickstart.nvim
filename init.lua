@@ -1,4 +1,4 @@
---[[
+--[[hyp
 
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
@@ -503,6 +503,9 @@ require('lazy').setup({
         cmake = {},
         cmakelang = {},
         cmakelint = {},
+
+        -- Hypr
+        hyprls = {},
 
         -- English
         ['harper-ls'] = {
