@@ -812,25 +812,11 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
     build = ':TSUpdate',
-    opts = {
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-    },
     config = function(_, opts)
-      require('nvim-treesitter').setup {
-        -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
-        install_dir = vim.fn.stdpath 'data' .. '/site',
-      }
-      require('nvim-treesitter').install {
+      local languages = {
         'c',
         'lua',
+        'luadoc',
         'vim',
         'vimdoc',
         'query',
@@ -838,28 +824,35 @@ require('lazy').setup({
         'c',
         'diff',
         'html',
-        'lua',
-        'luadoc',
         'markdown',
-        'vim',
-        'vimdoc',
         'javascript',
         'typescript',
         'go',
         'python',
         'comment',
       }
+      require('nvim-treesitter').install(languages)
+
+      for i, l in ipairs(languages) do
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = { l },
+          callback = function()
+            vim.treesitter.start()
+          end,
+        })
+      end
     end,
   },
+
   -- Highlight todo, notes, etc in comments
   {
     'folke/todo-comments.nvim',
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { signs = false },
-    -- config = function()
-    --   vim.keymap.set('n', '<leader>sc', ':TodoTelescope<cr>')
-    -- end,
+    config = function()
+      vim.keymap.set('n', '<leader>sc', ':TodoTelescope<cr>')
+    end,
   },
   {
     'takac/vim-hardtime',
