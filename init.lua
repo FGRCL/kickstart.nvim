@@ -756,18 +756,24 @@ require('lazy').setup({
     config = true,
   },
   {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+  {
     'f-person/auto-dark-mode.nvim',
     opts = {
       update_interval = 1000,
       set_dark_mode = function()
         -- vim.o.background = 'dark'
         -- vim.cmd.colorscheme 'gruvbox'
-        vim.cmd.colorscheme 'catppuccin-mocha'
+        vim.cmd.colorscheme 'tokyonight-night'
       end,
       set_light_mode = function()
         -- vim.o.background = 'light'
         -- vim.cmd.colorscheme 'gruvbox'
-        vim.cmd.colorscheme 'catppuccin-frappe'
+        vim.cmd.colorscheme 'tokyonight-night'
       end,
     },
   },
@@ -830,6 +836,7 @@ require('lazy').setup({
         'go',
         'python',
         'comment',
+        'yaml',
       }
       require('nvim-treesitter').install(languages)
 
