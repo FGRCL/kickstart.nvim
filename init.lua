@@ -1,4 +1,4 @@
---[[
+--[[init.
 
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
@@ -421,7 +421,9 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        -- Golang
         gopls = {},
+        ['golangci-lint'] = {},
 
         -- JavaScript
         eslint = {},
@@ -528,6 +530,8 @@ require('lazy').setup({
             'toml',
             'typescript',
             'typescriptreact',
+            'plaintext',
+            'text',
           },
         },
       }
@@ -766,14 +770,12 @@ require('lazy').setup({
     opts = {
       update_interval = 1000,
       set_dark_mode = function()
-        -- vim.o.background = 'dark'
-        -- vim.cmd.colorscheme 'gruvbox'
-        vim.cmd.colorscheme 'tokyonight-night'
+        vim.o.background = 'dark'
+        vim.cmd.colorscheme 'catppuccin'
       end,
       set_light_mode = function()
-        -- vim.o.background = 'light'
-        -- vim.cmd.colorscheme 'gruvbox'
-        vim.cmd.colorscheme 'tokyonight-night'
+        vim.o.background = 'light'
+        vim.cmd.colorscheme 'catppuccin'
       end,
     },
   },
