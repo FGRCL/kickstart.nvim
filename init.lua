@@ -183,6 +183,8 @@ vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
+vim.keymap.set('n', '<C-s><C-v>', '<C-w><C-v>', { desc = 'Split vertical' })
+vim.keymap.set('n', '<C-s><C-h>', '<C-w><C-s>', { desc = 'Split horizontal' })
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
@@ -471,19 +473,18 @@ require('lazy').setup({
         glow = {},
 
         -- Python
-        pylsp = {
-          -- settings = {
-          --   pylsp = {
-          --     plugins = {
-          --       pylint = { enabled = true },
-          --     },
-          --   },
-          -- },
-        },
-        black = {},
-        -- mypy = {},
+        -- pylsp = {
+        --   -- settings = {
+        --   --   pylsp = {
+        --   --     plugins = {
+        --   --       pylint = { enabled = true },
+        --   --     },
+        --   --   },
+        --   -- },
+        -- },
+        -- pyright = {},
         ruff = {},
-        pyright = {},
+        jedi_language_server = {},
 
         -- SQL
         sqlls = {},
