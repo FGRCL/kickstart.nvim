@@ -109,5 +109,9 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
+
+    -- Telescope undo
+    require('telescope').load_extension 'undo'
+    vim.keymap.set('n', '<leader>su', '<cmd>Telescope undo<cr>')
   end,
 }
