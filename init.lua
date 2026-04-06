@@ -843,6 +843,8 @@ require('lazy').setup({
         'python',
         'comment',
         'yaml',
+        'nu',
+        'nix',
       }
       require('nvim-treesitter').install(languages)
 
