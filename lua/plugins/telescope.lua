@@ -105,6 +105,13 @@ return { -- Fuzzy Finder (files, lsp, etc)
       }
     end, { desc = '[S]earch [/] in Open Files' })
 
+    vim.keymap.set('n', '<leader>sS', function()
+      builtin.git_files {
+        prompt_title = 'Staged Files',
+        git_command = { 'git', 'diff', '--cached', '--name-only' },
+      }
+    end, { desc = '[S]earch [S]taged files' })
+
     -- Shortcut for searching your Neovim configuration files
     vim.keymap.set('n', '<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }

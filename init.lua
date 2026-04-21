@@ -47,7 +47,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
@@ -236,6 +235,12 @@ require('lazy').setup({
 
         -- Mason
         yq = {},
+        -- Terraform
+        ['terraform-ls'] = {},
+        terraform = {},
+
+        -- Helm
+        ['helm-ls'] = {},
       }
 
       require('mason').setup()
@@ -275,13 +280,13 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = true,
-      format_on_save = function(bufnr)
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
+      -- format_on_save = function(bufnr)
+      --   local disable_filetypes = { c = true, cpp = true }
+      --   return {
+      --     timeout_ms = 500,
+      --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+      --   }
+      -- end,
       formatters_by_ft = {
         lua = { 'stylua' },
         javascript = { 'prettier' },
@@ -296,6 +301,7 @@ require('lazy').setup({
         bash = { 'shellharden' },
         cpp = { 'clang-format' },
         cmake = { 'cmakelang' },
+        -- terraform = { 'terraform_fmt' },
       },
     },
   },
@@ -399,19 +405,6 @@ require('lazy').setup({
         vim.cmd.colorscheme 'catppuccin'
       end,
     },
-  },
-  {
-    'echasnovski/mini.nvim',
-    config = function()
-      require('mini.ai').setup { n_lines = 500 }
-      require('mini.surround').setup()
-      local statusline = require 'mini.statusline'
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
-    end,
   },
   {
     'nvim-treesitter/nvim-treesitter',

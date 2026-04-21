@@ -15,6 +15,11 @@ return {
   },
   opts = {
     commands = {
+      live_grep_in = function(state)
+        local node = state.tree:get_node()
+        local path = node.type == 'directory' and node:get_id() or node:get_parent_id()
+        require('telescope.builtin').live_grep { search_dirs = { path } }
+      end,
       copy_selector = function(state)
         local node = state.tree:get_node()
         local filepath = node:get_id()
@@ -58,6 +63,7 @@ return {
         mappings = {
           ['\\'] = 'close_window',
           ['Y'] = 'copy_selector',
+          ['G'] = 'live_grep_in',
         },
       },
       filtered_items = {
