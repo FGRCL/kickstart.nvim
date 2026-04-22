@@ -20,6 +20,7 @@ return {
         cmake = { 'cmakelint' },
         go = { 'golangcilint' },
         lua = { 'selene' },
+        protobuf = { 'buf_ls' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

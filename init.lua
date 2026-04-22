@@ -241,6 +241,9 @@ require('lazy').setup({
 
         -- Helm
         ['helm-ls'] = {},
+
+        -- Protobuf
+        ['buf_ls'] = {},
       }
 
       require('mason').setup()
@@ -301,6 +304,7 @@ require('lazy').setup({
         bash = { 'shellharden' },
         cpp = { 'clang-format' },
         cmake = { 'cmakelang' },
+        protobuf = { 'buf_ls' },
         -- terraform = { 'terraform_fmt' },
       },
     },
