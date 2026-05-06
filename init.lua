@@ -38,6 +38,10 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 vim.keymap.set('n', '<leader>ww', ':w<cr>', { desc = 'Save current buffer' })
 vim.keymap.set('n', '<leader>wa', ':wa<cr>', { desc = 'Save all buffers' })
+vim.keymap.set('n', '<leader>wh', ':split<cr>', { desc = 'Save all buffers' })
+vim.keymap.set('n', '<leader>wv', ':vsplit<cr>', { desc = 'Save all buffers' })
+vim.keymap.set('n', '<leader>q', ':q<cr>', { desc = 'Save all buffers' })
+vim.keymap.set('n', '<leader>qa', ':wqa!<cr>', { desc = 'Save all buffers' })
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
