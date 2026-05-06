@@ -470,17 +470,15 @@ require('lazy').setup({
   {
     'ThePrimeagen/refactoring.nvim',
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
+      "lewis6991/async.nvim",
     },
     lazy = false,
     config = function()
-      require('refactoring').setup()
-      require('telescope').load_extension 'refactoring'
+      local keymap = vim.keymap
 
-      vim.keymap.set({ 'n', 'x' }, '<leader>rr', function()
-        require('telescope').extensions.refactoring.refactors()
-      end)
+      keymap.set({ "n", "x" }, "<leader>rr", function()
+        require("refactoring").select_refactor()
+      end, { desc = "Select refactor" })
     end,
   },
   { 'fatih/vim-go' },
