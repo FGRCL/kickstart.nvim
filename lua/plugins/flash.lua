@@ -13,7 +13,7 @@ return {
       desc = 'Flash',
     },
     {
-      'S',
+      '<leader>ft',
       mode = { 'n', 'x', 'o' },
       function()
         require('flash').treesitter()
@@ -37,7 +37,7 @@ return {
       desc = 'Treesitter Search',
     },
     {
-      '<c-s>',
+      '<C-s>',
       mode = { 'c' },
       function()
         require('flash').toggle()
