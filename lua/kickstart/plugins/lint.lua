@@ -5,6 +5,26 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
+      -- getArgs() in golangcilint.lua determines filename_modifier once at module load
+      -- using `go env GOMOD` in nvim's cwd. nvim-lint evaluates arg functions via
+      -- with_cwd(vim.fn.getcwd()), so re-running go env GOMOD in a lambda has the same
+      -- problem. Use findfile instead — it searches upward from the buffer's own directory
+      -- and is cwd-independent.
+      local golangcilint = require('lint').linters.golangcilint
+      if golangcilint and golangcilint.args then
+        for i, arg in ipairs(golangcilint.args) do
+          if type(arg) == 'function' then
+            golangcilint.args[i] = function()
+              local bufname = vim.api.nvim_buf_get_name(0)
+              local bufdir = vim.fn.fnamemodify(bufname, ':h')
+              local gomod = vim.fn.findfile('go.mod', bufdir .. ';')
+              return vim.fn.fnamemodify(bufname, gomod ~= '' and ':h' or ':p')
+            end
+            break
+          end
+        end
+      end
+
       lint.linters_by_ft = {
         markdown = { 'vale' },
         javascript = { 'eslint' },

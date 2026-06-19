@@ -43,6 +43,13 @@ vim.keymap.set('n', '<leader>wv', ':vsplit<cr>', { desc = 'Save all buffers' })
 vim.keymap.set('n', '<leader>q', ':q<cr>', { desc = 'Save all buffers' })
 vim.keymap.set('n', '<leader>qa', ':wqa!<cr>', { desc = 'Save all buffers' })
 
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+  vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+end ---@diagnostic disable-next-line: undefined-field
+
+vim.opt.rtp:prepend(lazypath)
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -51,12 +58,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   'tpope/vim-sleuth',
@@ -214,24 +215,24 @@ require('lazy').setup({
         -- English
         ['harper-ls'] = {
           filetypes = {
-            'c',
-            'cpp',
-            'cs',
-            'gitcommit',
-            'go',
-            'html',
-            'java',
-            'javascript',
-            'lua',
+            -- 'c',
+            -- 'cpp',
+            -- 'cs',
+            -- 'gitcommit',
+            -- 'go',
+            -- 'html',
+            -- 'java',
+            -- 'javascript',
+            -- 'lua',
             'markdown',
-            'nix',
-            'python',
-            'ruby',
-            'rust',
-            'swift',
-            'toml',
-            'typescript',
-            'typescriptreact',
+            -- 'nix',
+            -- 'python',
+            -- 'ruby',
+            -- 'rust',
+            -- 'swift',
+            -- 'toml',
+            -- 'typescript',
+            -- 'typescriptreact',
             'plaintext',
             'text',
           },
@@ -287,13 +288,13 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = true,
-      -- format_on_save = function(bufnr)
-      --   local disable_filetypes = { c = true, cpp = true }
-      --   return {
-      --     timeout_ms = 500,
-      --     lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-      --   }
-      -- end,
+      format_on_save = function(bufnr)
+        local disable_filetypes = { c = true, cpp = true }
+        return {
+          timeout_ms = 500,
+          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+        }
+      end,
       formatters_by_ft = {
         lua = { 'stylua' },
         javascript = { 'prettier' },
@@ -309,6 +310,7 @@ require('lazy').setup({
         cpp = { 'clang-format' },
         cmake = { 'cmakelang' },
         protobuf = { 'buf_ls' },
+        go = { 'gofmt' },
         -- terraform = { 'terraform_fmt' },
       },
     },
@@ -338,7 +340,31 @@ require('lazy').setup({
 
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      'tzachar/cmp-ai',
+      -- 'tzachar/cmp-ai',
+      {
+        'cmp-ai',
+        enabled = false,
+        dir = '/Users/francois.laberge/git/cmp-ai',
+        config = function ()
+          local cmp_ai = require('cmp_ai.config')
+          cmp_ai:setup({
+            max_lines = 1000,
+            provider = 'claude',
+            provider_options = {
+              model = "claude-haiku-4-5",
+              api_key = os.getenv("ANTHROPIC_API_KEY"),
+              base_url = "https://uai-litellm.internal.unity.com/v1/messages",
+            },
+            notify = true,
+            notify_callback = function(msg)
+              vim.notify(msg)
+            end,
+            run_on_every_keystroke = false,
+            ignored_file_types = {
+            },
+          })
+        end,
+      },
     },
     config = function()
       local cmp = require 'cmp'
@@ -380,6 +406,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'cmp_ai' },
         },
       }
     end,
@@ -481,7 +508,7 @@ require('lazy').setup({
       end, { desc = "Select refactor" })
     end,
   },
-  { 'fatih/vim-go' },
+  -- { 'fatih/vim-go' },
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',

@@ -20,21 +20,20 @@ return {
       end
 
       copy_selector = function(state)
-
-        vim.notify(sa)
-        local node = state.tree:get_node()
-        local filepath = node:get_id()
-        local filename = node.name
+        local oil = require("oil")
+        local filename = oil.get_cursor_entry().name
+        local filepath = oil.get_current_dir()
+        filepath = filepath .. filename
         local modify = vim.fn.fnamemodify
 
         local vals = {
-          ['BASENAME'] = modify(filename, ':r'),
-          ['EXTENSION'] = modify(filename, ':e'),
-          ['FILENAME'] = filename,
-          ['PATH (CWD)'] = modify(filepath, ':.'),
-          ['PATH (HOME)'] = modify(filepath, ':~'),
-          ['PATH'] = filepath,
-          ['URI'] = vim.uri_from_fname(filepath),
+          ['name'] = filename,
+          ['cwd'] = modify(filepath, ':.'),
+          ['full'] = filepath,
+          ['uri'] = vim.uri_from_fname(filepath),
+          ['basename'] = modify(filename, ':r'),
+          ['extension'] = modify(filename, ':e'),
+          ['home'] = modify(filepath, ':~'),
         }
 
         local options = vim.tbl_filter(function(val)
